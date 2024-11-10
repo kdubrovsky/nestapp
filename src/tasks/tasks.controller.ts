@@ -13,14 +13,17 @@ import {
   Res,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { TasksService } from './task.service';
 
 @Controller('tasks')
 export class TasksController {
   //
+  constructor(private tasksService: TasksService) {}
   // http localhost:3000/tasks
   @Get()
   findAll() {
-    return 'All tasks array response';
+    return this.tasksService.findAll();
   }
 
   // Library-specific response example
@@ -76,7 +79,8 @@ export class TasksController {
   // http POST localhost:3000/tasks/ id=helloworld
   @Post()
   @Header('Cache-Control', 'no-store') // specific header
-  create(@Body() body: { id: string }) {
-    return { ...body, date: new Date().toLocaleDateString() };
+  create(@Body() createTaskDto: CreateTaskDto) {
+    this.tasksService.create(createTaskDto);
+    return 'New Task created';
   }
 }
